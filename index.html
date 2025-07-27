@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Charles Paris Utility Knife - All-in-One HTML Utilities</title>
+    <meta name="description" content="Charles Paris Utility Knife: A comprehensive collection of 10 client-side HTML utilities including calculator, unit converter, notepad, to-do list, image tools, and more. No external APIs.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles to ensure Inter font and smooth transitions */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #1a202c; /* Dark background for body */
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            min-height: 100vh; /* Ensure it takes full viewport height */
+            padding: 2rem;
+            box-sizing: border-box;
+            color: #e2e8f0; /* Light text color for body */
+        }
+
+        /* Main container styling */
+        .utility-container {
+            background-color: #2d3748; /* Slightly lighter dark background */
+            border-radius: 1.5rem; /* More rounded corners */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2); /* Darker shadow */
+            padding: 2.5rem; /* Increased padding */
+            width: 100%;
+            max-width: 960px; /* Increased max-width for better layout */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* Navigation tabs styling */
+        .tab-button {
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            background-color: #4a5568; /* Dark gray for inactive */
+            color: #cbd5e0; /* Light gray text */
+            white-space: nowrap; /* Prevent wrapping */
+        }
+
+        .tab-button.active {
+            background-color: #667eea; /* Indigo for active */
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-button:hover:not(.active) {
+            background-color: #4a5568; /* Slightly darker on hover */
+            transform: translateY(-2px);
+        }
+
+        /* Utility section styling */
+        .utility-section {
+            display: none;
+            padding: 1.5rem;
+            border: 1px solid #4a5568; /* Darker border */
+            border-radius: 1rem;
+            background-color: #2d3748; /* Same as container for consistency */
+            min-height: 300px; /* Ensure consistent height */
+        }
+
+        .utility-section.active {
+            display: block;
+        }
+
+        /* Form elements styling */
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #4a5568; /* Darker border */
+            border-radius: 0.5rem;
+            background-color: #4a5568; /* Darker background */
+            font-size: 1rem;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            outline: none;
+            color: #e2e8f0; /* Light text */
+        }
+        /* Placeholder color for dark mode inputs */
+        input::placeholder,
+        textarea::placeholder {
+            color: #a0aec0; /* Lighter gray for placeholders */
+        }
+
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #667eea; /* Indigo on focus */
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.4); /* Darker shadow on focus */
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            background-color: #667eea; /* Indigo button */
+            color: #ffffff;
+            font-weight: 600;
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        button:hover {
+            background-color: #5a67d8; /* Darker indigo on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Specific styles for Calculator buttons */
+        #calculator button {
+            background-color: #4a5568; /* Dark gray for numbers */
+            color: #e2e8f0;
+        }
+        #calculator button.bg-indigo-500 {
+            background-color: #667eea; /* Indigo for operators */
+        }
+        #calculator button.bg-red-500 {
+            background-color: #ef4444; /* Red for C */
+        }
+        #calculator button.bg-red-600 {
+            background-color: #dc2626; /* Darker red for DEL */
+        }
+        #calculator button:hover {
+            background-color: #5a67d8; /* Darker indigo for operators on hover */
+        }
+        #calculator button.bg-red-500:hover {
+            background-color: #dc2626;
+        }
+        #calculator button.bg-red-600:hover {
+            background-color: #b91c1c;
+        }
+        #calc-display {
+            background-color: #1a202c; /* Very dark background for display */
+            color: #ffffff; /* White text for display */
+        }
+
+        /* Specific styles for To-Do List */
+        #todo-list li {
+            background-color: #4a5568; /* Darker background for list items */
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        #todo-list li.completed {
+            background-color: #2f855a; /* Darker green for completed tasks */
+        }
+        #todo-list li.completed span {
+            text-decoration: line-through;
+            color: #a0aec0;
+        }
+
+        #todo-list li button {
+            background-color: #ef4444; /* Red for delete */
+            padding: 0.3rem 0.6rem;
+            font-size: 0.8rem;
+            border-radius: 0.5rem;
+        }
+
+        #todo-list li button:hover {
+            background-color: #dc2626;
+        }
+
+        /* Image utility canvas */
+        canvas {
+            border: 1px solid #4a5568; /* Darker border */
+            border-radius: 0.5rem;
+            background-color: #2d3748; /* Darker background */
+            max-width: 100%;
+            height: auto; /* Ensure responsiveness */
+            display: block; /* Remove extra space below canvas */
+            margin-top: 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .utility-container {
+                padding: 1.5rem;
+            }
+            .tab-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .tab-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* Footer links styling */
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem; /* Increased gap for better spacing */
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #4a5568; /* Separator line */
+        }
+
+        .footer-links a {
+            color: #667eea; /* Indigo color for links */
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+        }
+
+        .footer-links a:hover {
+            color: #5a67d8; /* Darker indigo on hover */
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="utility-container">
+        <h1 class="text-4xl font-extrabold text-center text-white mb-6">Charles Paris Utility Knife</h1>
+        <p class="text-center text-gray-300 mb-8">A collection of essential client-side tools for your daily needs.</p>
+
+        <!-- Utility Sections -->
+
+        <!-- Calculator -->
+        <div id="calculator" class="utility-section active">
+            <h2 class="text-2xl font-bold text-white mb-4">Basic Calculator</h2>
+            <div class="grid grid-cols-4 gap-2">
+                <input type="text" id="calc-display" class="col-span-4 text-right text-2xl font-bold mb-2 p-2 rounded-lg" value="0" readonly>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('7')">7</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('8')">8</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('9')">9</button>
+                <button class="col-span-1 p-4 bg-indigo-500 text-white rounded-lg text-xl" onclick="appendToDisplay('/')">/</button>
+
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('4')">4</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('5')">5</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('6')">6</button>
+                <button class="col-span-1 p-4 bg-indigo-500 text-white rounded-lg text-xl" onclick="appendToDisplay('*')">*</button>
+
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('1')">1</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('2')">2</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('3')">3</button>
+                <button class="col-span-1 p-4 bg-indigo-500 text-white rounded-lg text-xl" onclick="appendToDisplay('-')">-</button>
+
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('0')">0</button>
+                <button class="col-span-1 p-4 rounded-lg text-xl" onclick="appendToDisplay('.')">.</button>
+                <button class="col-span-1 p-4 bg-indigo-500 text-white rounded-lg text-xl" onclick="appendToDisplay('+')">+</button>
+                <button class="col-span-1 p-4 bg-indigo-500 text-white rounded-lg text-xl" onclick="calculateResult()">=</button>
+                <button class="col-span-2 p-4 bg-red-500 text-white rounded-lg text-xl" onclick="clearDisplay()">C</button>
+                <button class="col-span-2 p-4 bg-red-600 text-white rounded-lg text-xl" onclick="deleteLastChar()">DEL</button>
+            </div>
+        </div>
+
+        <!-- Unit Converter -->
+        <div id="unit-converter" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Unit Converter</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="convert-value" class="block text-gray-300 text-sm font-bold mb-2">Value:</label>
+                    <input type="number" id="convert-value" class="mb-2" placeholder="Enter value">
+                </div>
+                <div>
+                    <label for="from-unit" class="block text-gray-300 text-sm font-bold mb-2">From Unit:</label>
+                    <select id="from-unit" class="w-full p-2 border rounded-md mb-2">
+                        <optgroup label="Length">
+                            <option value="meters">Meters</option>
+                            <option value="kilometers">Kilometers</option>
+                            <option value="feet">Feet</option>
+                            <option value="miles">Miles</option>
+                        </optgroup>
+                        <optgroup label="Weight">
+                            <option value="grams">Grams</option>
+                            <option value="kilograms">Kilograms</option>
+                            <option value="pounds">Pounds</option>
+                            <option value="ounces">Ounces</option>
+                        </optgroup>
+                        <optgroup label="Temperature">
+                            <option value="celsius">Celsius</option>
+                            <option value="fahrenheit">Fahrenheit</option>
+                            <option value="kelvin">Kelvin</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div>
+                    <label for="to-unit" class="block text-gray-300 text-sm font-bold mb-2">To Unit:</label>
+                    <select id="to-unit" class="w-full p-2 border rounded-md mb-2">
+                        <optgroup label="Length">
+                            <option value="meters">Meters</option>
+                            <option value="kilometers">Kilometers</option>
+                            <option value="feet">Feet</option>
+                            <option value="miles">Miles</option>
+                        </optgroup>
+                        <optgroup label="Weight">
+                            <option value="grams">Grams</option>
+                            <option value="kilograms">Kilograms</option>
+                            <option value="pounds">Pounds</option>
+                            <option value="ounces">Ounces</option>
+                        </optgroup>
+                        <optgroup label="Temperature">
+                            <option value="celsius">Celsius</option>
+                            <option value="fahrenheit">Fahrenheit</option>
+                            <option value="kelvin">Kelvin</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+            <button onclick="convertUnit()" class="mt-4">Convert</button>
+            <p class="mt-4 text-lg font-semibold">Result: <span id="conversion-result"></span></p>
+        </div>
+
+        <!-- Word Counter -->
+        <div id="word-counter" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Word Counter</h2>
+            <textarea id="word-counter-text" rows="8" class="mb-4" placeholder="Type or paste your text here..."></textarea>
+            <button onclick="countWords()">Count Words</button>
+            <div class="mt-4 text-lg font-semibold">
+                <p>Words: <span id="word-count">0</span></p>
+                <p>Characters (with spaces): <span id="char-count">0</span></p>
+                <p>Characters (no spaces): <span id="char-no-space-count">0</span></p>
+            </div>
+        </div>
+
+        <!-- Case Converter -->
+        <div id="case-converter" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Case Converter</h2>
+            <textarea id="case-converter-input" rows="5" class="mb-4" placeholder="Enter text to convert..."></textarea>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <button onclick="convertToCase('uppercase')">UPPERCASE</button>
+                <button onclick="convertToCase('lowercase')">lowercase</button>
+                <button onclick="convertToCase('capitalize')">Capitalize Each Word</button>
+                <button onclick="convertToCase('sentencecase')">Sentence case</button>
+            </div>
+            <textarea id="case-converter-output" rows="5" class="mb-4" readonly placeholder="Converted text will appear here..."></textarea>
+            <button onclick="copyToClipboard('case-converter-output')">Copy to Clipboard</button>
+        </div>
+
+        <!-- Simple Note Pad -->
+        <div id="notepad" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Simple Note Pad</h2>
+            <textarea id="notepad-content" rows="10" class="mb-4" placeholder="Write your notes here..."></textarea>
+            <div class="flex gap-2">
+                <button onclick="saveNote()">Save Note</button>
+                <button onclick="clearNote()" class="bg-red-500 hover:bg-red-600">Clear Note</button>
+            </div>
+            <p class="mt-4 text-sm text-gray-400">Notes are saved locally in your browser.</p>
+        </div>
+
+        <!-- To-Do List -->
+        <div id="todo-list" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">To-Do List</h2>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="todo-input" class="flex-grow" placeholder="Add a new task...">
+                <button onclick="addTodo()">Add Task</button>
+            </div>
+            <ul id="todo-list-items" class="space-y-2">
+                <!-- To-Do items will be dynamically added here -->
+            </ul>
+        </div>
+
+        <!-- Countdown Timer -->
+        <div id="countdown-timer" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Countdown Timer</h2>
+            <label for="countdown-date" class="block text-gray-300 text-sm font-bold mb-2">Set Target Date & Time:</label>
+            <input type="datetime-local" id="countdown-date" class="mb-4">
+            <div class="flex gap-2 mb-4">
+                <button onclick="startCountdown()">Start Countdown</button>
+                <button onclick="resetCountdown()" class="bg-red-500 hover:bg-red-600">Reset</button>
+            </div>
+            <div class="text-center text-4xl font-bold text-white mb-4" id="countdown-display">00d 00h 00m 00s</div>
+            <p class="text-sm text-gray-400 text-center">Countdown target is saved locally.</p>
+        </div>
+
+        <!-- Stopwatch -->
+        <div id="stopwatch" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Stopwatch</h2>
+            <div class="text-center text-5xl font-bold text-white mb-4" id="stopwatch-display">00:00:00</div>
+            <div class="flex justify-center gap-4 mb-4">
+                <button onclick="startStopwatch()">Start</button>
+                <button onclick="pauseStopwatch()" class="bg-yellow-500 hover:bg-yellow-600">Pause</button>
+                <button onclick="resetStopwatch()" class="bg-red-500 hover:bg-red-600">Reset</button>
+            </div>
+            <ul id="stopwatch-laps" class="list-disc list-inside text-gray-300">
+                <!-- Laps will appear here -->
+            </ul>
+        </div>
+
+        <!-- Image Resizer -->
+        <div id="image-resizer" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Image Resizer</h2>
+            <input type="file" id="image-resizer-input" accept="image/*" class="mb-4 p-2 border rounded-lg">
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label for="resize-width" class="block text-gray-300 text-sm font-bold mb-2">Width (px):</label>
+                    <input type="number" id="resize-width" placeholder="New width">
+                </div>
+                <div>
+                    <label for="resize-height" class="block text-gray-300 text-sm font-bold mb-2">Height (px):</label>
+                    <input type="number" id="resize-height" placeholder="New height">
+                </div>
+            </div>
+            <button onclick="resizeImage()">Resize Image</button>
+            <canvas id="image-resizer-canvas" class="mt-4"></canvas>
+            <a id="download-resized-image" download="resized_image.png" class="hidden mt-4 text-center block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg cursor-pointer">Download Resized Image</a>
+        </div>
+
+        <!-- Grayscale Image Converter -->
+        <div id="grayscale-converter" class="utility-section">
+            <h2 class="text-2xl font-bold text-white mb-4">Grayscale Image Converter</h2>
+            <input type="file" id="grayscale-input" accept="image/*" class="mb-4 p-2 border rounded-lg">
+            <button onclick="applyGrayscale()">Apply Grayscale</button>
+            <canvas id="grayscale-canvas" class="mt-4"></canvas>
+            <a id="download-grayscale-image" download="grayscale_image.png" class="hidden mt-4 text-center block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg cursor-pointer">Download Grayscale Image</a>
+        </div>
+
+        <!-- Navigation Tabs (Moved to bottom) -->
+        <div class="flex flex-wrap justify-center gap-3 mt-6 tab-container">
+            <button class="tab-button active" data-tab="calculator">Calculator</button>
+            <button class="tab-button" data-tab="unit-converter">Unit Converter</button>
+            <button class="tab-button" data-tab="word-counter">Word Counter</button>
+            <button class="tab-button" data-tab="case-converter">Case Converter</button>
+            <button class="tab-button" data-tab="notepad">Simple Note Pad</button>
+            <button class="tab-button" data-tab="todo-list">To-Do List</button>
+            <button class="tab-button" data-tab="countdown-timer">Countdown Timer</button>
+            <button class="tab-button" data-tab="stopwatch">Stopwatch</button>
+            <button class="tab-button" data-tab="image-resizer">Image Resizer</button>
+            <button class="tab-button" data-tab="grayscale-converter">Grayscale Converter</button>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="footer-links">
+            <a href="https://365otg.github.io/CPU/" target="_blank" rel="noopener noreferrer">Charles Paris Utilities</a>
+            <a href="https://365otg.github.io/365CP/" target="_blank" rel="noopener noreferrer">My Website</a>
+            <a href="https://paypal.me/overtimegrind" target="_blank" rel="noopener noreferrer">Donate $10</a>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Global Utility Functions ---
+
+        /**
+         * Copies text from a specified element to the clipboard.
+         * @param {string} elementId - The ID of the HTML element containing the text to copy.
+         */
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                // Select the text in the element
+                element.select();
+                element.setSelectionRange(0, 99999); // For mobile devices
+
+                // Copy the text
+                try {
+                    document.execCommand('copy');
+                    // Provide visual feedback (e.g., change button text temporarily)
+                    const button = document.querySelector(`button[onclick="copyToClipboard('${elementId}')"]`);
+                    if (button) {
+                        const originalText = button.textContent;
+                        button.textContent = 'Copied!';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                        }, 2000);
+                    }
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    // Fallback for browsers that don't support execCommand (though it's widely supported)
+                    // You might consider a custom message box here instead of alert()
+                }
+            }
+        }
+
+        // --- Tab Navigation Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabs = document.querySelectorAll('.tab-button');
+            const sections = document.querySelectorAll('.utility-section');
+
+            /**
+             * Activates the selected tab and displays its corresponding section.
+             * @param {string} tabId - The ID of the tab/section to activate.
+             */
+            function activateTab(tabId) {
+                // Deactivate all tabs and hide all sections
+                tabs.forEach(tab => tab.classList.remove('active'));
+                sections.forEach(section => section.classList.remove('active'));
+
+                // Activate the clicked tab and show its section
+                const activeTabButton = document.querySelector(`.tab-button[data-tab="${tabId}"]`);
+                const activeSection = document.getElementById(tabId);
+
+                if (activeTabButton) {
+                    activeTabButton.classList.add('active');
+                }
+                if (activeSection) {
+                    activeSection.classList.add('active');
+                }
+
+                // Special handling for timers to ensure they stop/start correctly when tabs change
+                if (tabId !== 'countdown-timer') {
+                    clearInterval(countdownInterval); // Stop countdown if not on its tab
+                }
+                if (tabId !== 'stopwatch') {
+                    pauseStopwatch(); // Pause stopwatch if not on its tab
+                }
+
+                // Load initial data for Notepad and To-Do list when their tabs are activated
+                if (tabId === 'notepad') {
+                    loadNote();
+                }
+                if (tabId === 'todo-list') {
+                    renderTodos();
+                }
+            }
+
+            // Add click listeners to all tab buttons
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.dataset.tab;
+                    activateTab(tabId);
+                });
+            });
+
+            // Activate the first tab by default on load
+            if (tabs.length > 0) {
+                activateTab(tabs[0].dataset.tab);
+            }
+        });
+
+
+        // --- 1. Basic Calculator Logic ---
+        const calcDisplay = document.getElementById('calc-display');
+        let currentInput = '0';
+        let operator = null;
+        let prevValue = null;
+        let resetDisplay = false;
+
+        /**
+         * Appends a character to the calculator display.
+         * @param {string} char - The character to append (number, decimal, or operator).
+         */
+        function appendToDisplay(char) {
+            if (resetDisplay) {
+                currentInput = char;
+                resetDisplay = false;
+            } else {
+                if (currentInput === '0' && char !== '.') {
+                    currentInput = char;
+                } else {
+                    currentInput += char;
+                }
+            }
+            calcDisplay.value = currentInput;
+        }
+
+        /**
+         * Clears the calculator display and resets all internal values.
+         */
+        function clearDisplay() {
+            currentInput = '0';
+            operator = null;
+            prevValue = null;
+            resetDisplay = false;
+            calcDisplay.value = currentInput;
+        }
+
+        /**
+         * Deletes the last character from the calculator display.
+         */
+        function deleteLastChar() {
+            currentInput = currentInput.slice(0, -1);
+            if (currentInput === '') {
+                currentInput = '0';
+            }
+            calcDisplay.value = currentInput;
+        }
+
+        /**
+         * Performs the calculation based on the current input and stored operator.
+         */
+        function calculateResult() {
+            try {
+                // Use Function constructor for safe evaluation of math expressions
+                // This is generally safe for user-controlled input in a calculator context
+                // but should be avoided for arbitrary untrusted code.
+                const result = new Function('return ' + currentInput)();
+                currentInput = result.toString();
+                calcDisplay.value = currentInput;
+                resetDisplay = true; // Prepare for new input after result
+            } catch (e) {
+                calcDisplay.value = 'Error';
+                currentInput = '0';
+                resetDisplay = true;
+            }
+        }
+
+        // --- 2. Unit Converter Logic ---
+        const convertValueInput = document.getElementById('convert-value');
+        const fromUnitSelect = document.getElementById('from-unit');
+        const toUnitSelect = document.getElementById('to-unit');
+        const conversionResultSpan = document.getElementById('conversion-result');
+
+        /**
+         * Converts a value from one unit to another.
+         */
+        function convertUnit() {
+            const value = parseFloat(convertValueInput.value);
+            const fromUnit = fromUnitSelect.value;
+            const toUnit = toUnitSelect.value;
+
+            if (isNaN(value)) {
+                conversionResultSpan.textContent = 'Please enter a valid number.';
+                return;
+            }
+
+            let result;
+
+            // Length Conversions (to meters as base)
+            const lengthMap = {
+                meters: 1,
+                kilometers: 1000,
+                feet: 0.3048,
+                miles: 1609.34
+            };
+
+            // Weight Conversions (to grams as base)
+            const weightMap = {
+                grams: 1,
+                kilograms: 1000,
+                pounds: 453.592,
+                ounces: 28.3495
+            };
+
+            // Temperature Conversions (special handling needed)
+            function convertTemperature(value, from, to) {
+                let celsius;
+                if (from === 'celsius') celsius = value;
+                else if (from === 'fahrenheit') celsius = (value - 32) * 5 / 9;
+                else if (from === 'kelvin') celsius = value - 273.15;
+
+                if (to === 'celsius') return celsius;
+                else if (to === 'fahrenheit') return (celsius * 9 / 5) + 32;
+                else if (to === 'kelvin') return celsius + 273.15;
+                return NaN; // Should not happen with valid units
+            }
+
+            // Determine conversion type based on selected units
+            const fromGroup = fromUnitSelect.options[fromUnitSelect.selectedIndex].parentNode.label;
+            const toGroup = toUnitSelect.options[toUnitSelect.selectedIndex].parentNode.label;
+
+            if (fromGroup !== toGroup) {
+                conversionResultSpan.textContent = 'Cannot convert between different types of units (e.g., Length to Weight).';
+                return;
+            }
+
+            if (fromGroup === 'Length') {
+                const valueInMeters = value * lengthMap[fromUnit];
+                result = valueInMeters / lengthMap[toUnit];
+            } else if (fromGroup === 'Weight') {
+                const valueInGrams = value * weightMap[fromUnit];
+                result = valueInGrams / weightMap[toUnit];
+            } else if (fromGroup === 'Temperature') {
+                result = convertTemperature(value, fromUnit, toUnit);
+            } else {
+                conversionResultSpan.textContent = 'Invalid unit selection.';
+                return;
+            }
+
+            if (isNaN(result)) {
+                conversionResultSpan.textContent = 'Conversion error.';
+            } else {
+                conversionResultSpan.textContent = result.toFixed(4) + ' ' + toUnit;
+            }
+        }
+
+        // --- 3. Word Counter Logic ---
+        const wordCounterTextarea = document.getElementById('word-counter-text');
+        const wordCountSpan = document.getElementById('word-count');
+        const charCountSpan = document.getElementById('char-count');
+        const charNoSpaceCountSpan = document.getElementById('char-no-space-count');
+
+        /**
+         * Counts words, characters with spaces, and characters without spaces in the text area.
+         */
+        function countWords() {
+            const text = wordCounterTextarea.value;
+
+            // Word count: Split by whitespace and filter out empty strings
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            wordCountSpan.textContent = words.length;
+
+            // Character count (with spaces)
+            charCountSpan.textContent = text.length;
+
+            // Character count (no spaces)
+            charNoSpaceCountSpan.textContent = text.replace(/\s/g, '').length;
+        }
+
+        // Add event listener for real-time counting
+        wordCounterTextarea.addEventListener('input', countWords);
+        // Initial count on load
+        document.addEventListener('DOMContentLoaded', countWords);
+
+        // --- 4. Case Converter Logic ---
+        const caseConverterInput = document.getElementById('case-converter-input');
+        const caseConverterOutput = document.getElementById('case-converter-output');
+
+        /**
+         * Converts the input text to the specified case.
+         * @param {string} type - The type of case conversion ('uppercase', 'lowercase', 'capitalize', 'sentencecase').
+         */
+        function convertToCase(type) {
+            const text = caseConverterInput.value;
+            let convertedText = '';
+
+            switch (type) {
+                case 'uppercase':
+                    convertedText = text.toUpperCase();
+                    break;
+                case 'lowercase':
+                    convertedText = text.toLowerCase();
+                    break;
+                case 'capitalize':
+                    // Capitalize first letter of each word
+                    convertedText = text.split(' ').map(word => {
+                        if (word.length === 0) return '';
+                        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+                    }).join(' ');
+                    break;
+                case 'sentencecase':
+                    // Capitalize first letter of each sentence
+                    convertedText = text.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, function(c) {
+                        return c.toUpperCase();
+                    });
+                    break;
+                default:
+                    convertedText = text;
+            }
+            caseConverterOutput.value = convertedText;
+        }
+
+        // --- 5. Simple Note Pad Logic ---
+        const notepadContent = document.getElementById('notepad-content');
+        const NOTE_KEY = 'simpleNotePadContent';
+
+        /**
+         * Saves the current content of the notepad to localStorage.
+         */
+        function saveNote() {
+            localStorage.setItem(NOTE_KEY, notepadContent.value);
+            // Provide visual feedback
+            const saveButton = document.querySelector('#notepad button:nth-of-type(1)');
+            const originalText = saveButton.textContent;
+            saveButton.textContent = 'Saved!';
+            setTimeout(() => {
+                saveButton.textContent = originalText;
+            }, 1500);
+        }
+
+        /**
+         * Loads the saved note from localStorage into the notepad.
+         */
+        function loadNote() {
+            const savedNote = localStorage.getItem(NOTE_KEY);
+            if (savedNote) {
+                notepadContent.value = savedNote;
+            }
+        }
+
+        /**
+         * Clears the notepad content and removes it from localStorage.
+         */
+        function clearNote() {
+            notepadContent.value = '';
+            localStorage.removeItem(NOTE_KEY);
+            // Provide visual feedback
+            const clearButton = document.querySelector('#notepad button:nth-of-type(2)');
+            const originalText = clearButton.textContent;
+            clearButton.textContent = 'Cleared!';
+            setTimeout(() => {
+                clearButton.textContent = originalText;
+            }, 1500);
+        }
+
+        // Load note when the page loads or tab is activated
+        document.addEventListener('DOMContentLoaded', loadNote);
+
+
+        // --- 6. To-Do List Logic ---
+        const todoInput = document.getElementById('todo-input');
+        const todoListItems = document.getElementById('todo-list-items');
+        const TODO_KEY = 'todoListItems';
+        let todos = [];
+
+        /**
+         * Renders the current list of to-do items to the UI.
+         */
+        function renderTodos() {
+            todoListItems.innerHTML = ''; // Clear existing list
+            todos = JSON.parse(localStorage.getItem(TODO_KEY)) || []; // Load from localStorage
+
+            todos.forEach((todo, index) => {
+                const li = document.createElement('li');
+                li.className = `flex items-center justify-between p-3 rounded-lg shadow-sm transition-all duration-200 ${todo.completed ? 'bg-green-700' : 'bg-gray-700'}`; /* Adjusted for dark mode */
+                li.innerHTML = `
+                    <span class="flex-grow cursor-pointer ${todo.completed ? 'line-through text-gray-400' : 'text-gray-100'}" data-index="${index}">${todo.text}</span>
+                    <button class="ml-4 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg text-sm transition-colors duration-200" data-index="${index}">Delete</button>
+                `;
+                todoListItems.appendChild(li);
+            });
+            attachTodoEventListeners();
+        }
+
+        /**
+         * Attaches event listeners for toggling completion and deleting to-do items.
+         */
+        function attachTodoEventListeners() {
+            todoListItems.querySelectorAll('span').forEach(span => {
+                span.onclick = function() { toggleTodoComplete(parseInt(this.dataset.index)); };
+            });
+            todoListItems.querySelectorAll('button').forEach(button => {
+                button.onclick = function() { deleteTodo(parseInt(this.dataset.index)); };
+            });
+        }
+
+        /**
+         * Adds a new to-do item to the list.
+         */
+        function addTodo() {
+            const text = todoInput.value.trim();
+            if (text) {
+                todos.push({ text: text, completed: false });
+                localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+                todoInput.value = ''; // Clear input
+                renderTodos();
+            }
+        }
+
+        /**
+         * Toggles the completion status of a to-do item.
+         * @param {number} index - The index of the to-do item to toggle.
+         */
+        function toggleTodoComplete(index) {
+            if (index >= 0 && index < todos.length) {
+                todos[index].completed = !todos[index].completed;
+                localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+                renderTodos();
+            }
+        }
+
+        /**
+         * Deletes a to-do item from the list.
+         * @param {number} index - The index of the to-do item to delete.
+         */
+        function deleteTodo(index) {
+            if (index >= 0 && index < todos.length) {
+                todos.splice(index, 1); // Remove item at index
+                localStorage.setItem(TODO_KEY, JSON.stringify(todos));
+                renderTodos();
+            }
+        }
+
+        // Initial render on load
+        document.addEventListener('DOMContentLoaded', renderTodos);
+
+
+        // --- 7. Countdown Timer Logic ---
+        const countdownDateInput = document.getElementById('countdown-date');
+        const countdownDisplay = document.getElementById('countdown-display');
+        const COUNTDOWN_TARGET_KEY = 'countdownTarget';
+        let countdownInterval;
+        let targetDate = null;
+
+        /**
+         * Loads the saved countdown target date from localStorage.
+         */
+        function loadCountdownTarget() {
+            const savedTarget = localStorage.getItem(COUNTDOWN_TARGET_KEY);
+            if (savedTarget) {
+                countdownDateInput.value = savedTarget;
+                targetDate = new Date(savedTarget).getTime();
+                // If a target date exists, try to start the countdown immediately
+                if (targetDate > new Date().getTime()) {
+                    startCountdown();
+                } else {
+                    countdownDisplay.textContent = '00d 00h 00m 00s (Expired)';
+                }
+            }
+        }
+
+        /**
+         * Starts the countdown timer.
+         */
+        function startCountdown() {
+            const inputDate = countdownDateInput.value;
+            if (!inputDate) {
+                countdownDisplay.textContent = 'Please set a target date and time.';
+                return;
+            }
+
+            targetDate = new Date(inputDate).getTime();
+            localStorage.setItem(COUNTDOWN_TARGET_KEY, inputDate); // Save target
+
+            // Clear any existing interval to prevent multiple timers
+            clearInterval(countdownInterval);
+
+            countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown(); // Initial call to display immediately
+        }
+
+        /**
+         * Updates the countdown display every second.
+         */
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(countdownInterval);
+                countdownDisplay.textContent = 'Countdown Finished!';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            countdownDisplay.textContent =
+                `${String(days).padStart(2, '0')}d ` +
+                `${String(hours).padStart(2, '0')}h ` +
+                `${String(minutes).padStart(2, '0')}m ` +
+                `${String(seconds).padStart(2, '0')}s`;
+        }
+
+        /**
+         * Resets the countdown timer.
+         */
+        function resetCountdown() {
+            clearInterval(countdownInterval);
+            countdownDateInput.value = '';
+            countdownDisplay.textContent = '00d 00h 00m 00s';
+            localStorage.removeItem(COUNTDOWN_TARGET_KEY);
+            targetDate = null;
+        }
+
+        // Load countdown target on page load
+        document.addEventListener('DOMContentLoaded', loadCountdownTarget);
+
+
+        // --- 8. Stopwatch Logic ---
+        const stopwatchDisplay = document.getElementById('stopwatch-display');
+        const stopwatchLapsList = document.getElementById('stopwatch-laps');
+        let stopwatchInterval;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let isRunning = false;
+        let laps = [];
+
+        const STOPWATCH_ELAPSED_KEY = 'stopwatchElapsedTime';
+        const STOPWATCH_LAPS_KEY = 'stopwatchLaps';
+
+        /**
+         * Formats milliseconds into HH:MM:SS.
+         * @param {number} ms - Milliseconds to format.
+         * @returns {string} Formatted time string.
+         */
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+
+            return (
+                String(hours).padStart(2, '0') + ':' +
+                String(minutes).padStart(2, '0') + ':' +
+                String(seconds).padStart(2, '0')
+            );
+        }
+
+        /**
+         * Updates the stopwatch display.
+         */
+        function updateStopwatch() {
+            elapsedTime = Date.now() - startTime;
+            stopwatchDisplay.textContent = formatTime(elapsedTime);
+        }
+
+        /**
+         * Starts or resumes the stopwatch.
+         */
+        function startStopwatch() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime; // Adjust startTime for resuming
+                stopwatchInterval = setInterval(updateStopwatch, 1000);
+                isRunning = true;
+            }
+        }
+
+        /**
+         * Pauses the stopwatch.
+         */
+        function pauseStopwatch() {
+            clearInterval(stopwatchInterval);
+            isRunning = false;
+        }
+
+        /**
+         * Resets the stopwatch to zero and clears laps.
+         */
+        function resetStopwatch() {
+            clearInterval(stopwatchInterval);
+            isRunning = false;
+            startTime = 0;
+            elapsedTime = 0;
+            laps = [];
+            stopwatchDisplay.textContent = '00:00:00';
+            stopwatchLapsList.innerHTML = '';
+            localStorage.removeItem(STOPWATCH_ELAPSED_KEY);
+            localStorage.removeItem(STOPWATCH_LAPS_KEY);
+        }
+
+        /**
+         * Records a lap time.
+         */
+        function recordLap() {
+            if (isRunning) {
+                laps.push(formatTime(elapsedTime));
+                renderLaps();
+                localStorage.setItem(STOPWATCH_LAPS_KEY, JSON.stringify(laps));
+            }
+        }
+
+        /**
+         * Renders the recorded lap times to the UI.
+         */
+        function renderLaps() {
+            stopwatchLapsList.innerHTML = '';
+            laps.forEach((lap, index) => {
+                const li = document.createElement('li');
+                li.textContent = `Lap ${index + 1}: ${lap}`;
+                stopwatchLapsList.appendChild(li);
+            });
+        }
+
+        // Add a lap button (not in original prompt, but useful for stopwatch)
+        const stopwatchSection = document.getElementById('stopwatch');
+        const lapButton = document.createElement('button');
+        lapButton.textContent = 'Lap';
+        lapButton.className = 'bg-blue-500 hover:bg-blue-600 ml-4';
+        lapButton.onclick = recordLap;
+        stopwatchSection.querySelector('.flex.justify-center.gap-4').appendChild(lapButton);
+
+
+        // Load stopwatch state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedElapsedTime = localStorage.getItem(STOPWATCH_ELAPSED_KEY);
+            const savedLaps = localStorage.getItem(STOPWATCH_LAPS_KEY);
+
+            if (savedElapsedTime) {
+                elapsedTime = parseInt(savedElapsedTime, 10);
+                stopwatchDisplay.textContent = formatTime(elapsedTime);
+            }
+            if (savedLaps) {
+                laps = JSON.parse(savedLaps);
+                renderLaps();
+            }
+        });
+
+        // Save elapsed time when leaving the stopwatch tab or closing the browser
+        window.addEventListener('beforeunload', () => {
+            if (isRunning) {
+                localStorage.setItem(STOPWATCH_ELAPSED_KEY, elapsedTime.toString());
+            }
+        });
+
+
+        // --- 9. Image Resizer Logic ---
+        const imageResizerInput = document.getElementById('image-resizer-input');
+        const resizeWidthInput = document.getElementById('resize-width');
+        const resizeHeightInput = document.getElementById('resize-height');
+        const imageResizerCanvas = document.getElementById('image-resizer-canvas');
+        const resizerCtx = imageResizerCanvas.getContext('2d');
+        const downloadResizedLink = document.getElementById('download-resized-image');
+        let originalImage = null;
+
+        imageResizerInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        originalImage = img;
+                        // Set initial dimensions to original image size
+                        resizeWidthInput.value = img.width;
+                        resizeHeightInput.value = img.height;
+
+                        // Display original image on canvas for preview
+                        imageResizerCanvas.width = img.width;
+                        imageResizerCanvas.height = img.height;
+                        resizerCtx.clearRect(0, 0, imageResizerCanvas.width, imageResizerCanvas.height);
+                        resizerCtx.drawImage(img, 0, 0);
+                        downloadResizedLink.classList.add('hidden'); // Hide download link initially
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        /**
+         * Resizes the loaded image to the specified dimensions and draws it on the canvas.
+         */
+        function resizeImage() {
+            if (!originalImage) {
+                alert('Please load an image first.');
+                return;
+            }
+
+            const newWidth = parseInt(resizeWidthInput.value);
+            const newHeight = parseInt(resizeHeightInput.value);
+
+            if (isNaN(newWidth) || isNaN(newHeight) || newWidth <= 0 || newHeight <= 0) {
+                alert('Please enter valid positive width and height values.');
+                return;
+            }
+
+            imageResizerCanvas.width = newWidth;
+            imageResizerCanvas.height = newHeight;
+
+            // Clear canvas and draw the resized image
+            resizerCtx.clearRect(0, 0, newWidth, newHeight);
+            resizerCtx.drawImage(originalImage, 0, 0, newWidth, newHeight);
+
+            // Enable download link
+            downloadResizedLink.href = imageResizerCanvas.toDataURL('image/png');
+            downloadResizedLink.classList.remove('hidden');
+        }
+
+        // --- 10. Grayscale Image Converter Logic ---
+        const grayscaleInput = document.getElementById('grayscale-input');
+        const grayscaleCanvas = document.getElementById('grayscale-canvas');
+        const grayscaleCtx = grayscaleCanvas.getContext('2d');
+        const downloadGrayscaleLink = document.getElementById('download-grayscale-image');
+        let loadedImageForGrayscale = null;
+
+        grayscaleInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        loadedImageForGrayscale = img;
+                        grayscaleCanvas.width = img.width;
+                        grayscaleCanvas.height = img.height;
+                        grayscaleCtx.clearRect(0, 0, grayscaleCanvas.width, grayscaleCanvas.height);
+                        grayscaleCtx.drawImage(img, 0, 0);
+                        downloadGrayscaleLink.classList.add('hidden'); // Hide download link initially
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        /**
+         * Applies a grayscale filter to the loaded image and draws it on the canvas.
+         */
+        function applyGrayscale() {
+            if (!loadedImageForGrayscale) {
+                alert('Please load an image first.');
+                return;
+            }
+
+            grayscaleCanvas.width = loadedImageForGrayscale.width;
+            grayscaleCanvas.height = loadedImageForGrayscale.height;
+            grayscaleCtx.drawImage(loadedImageForGrayscale, 0, 0);
+
+            const imageData = grayscaleCtx.getImageData(0, 0, grayscaleCanvas.width, grayscaleCanvas.height);
+            const pixels = imageData.data; // RGBA array
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                const r = pixels[i];
+                const g = pixels[i + 1];
+                const b = pixels[i + 2];
+
+                // Calculate grayscale value using luminosity method
+                const gray = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+
+                pixels[i] = gray;     // Red
+                pixels[i + 1] = gray; // Green
+                pixels[i + 2] = gray; // Blue
+                // Alpha (pixels[i + 3]) remains unchanged
+            }
+
+            grayscaleCtx.putImageData(imageData, 0, 0);
+
+            // Enable download link
+            downloadGrayscaleLink.href = grayscaleCanvas.toDataURL('image/png');
+            downloadGrayscaleLink.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
