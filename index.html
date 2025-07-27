@@ -232,6 +232,28 @@
             color: #5a67d8; /* Darker indigo on hover */
             transform: translateY(-2px);
         }
+
+        /* Promotional video/iframe styling */
+        .promotional-video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem; /* Added margin-top for spacing from tabs */
+        }
+
+        .promotional-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: 1rem; /* Apply border-radius to iframe as well */
+        }
     </style>
 </head>
 <body>
@@ -443,6 +465,20 @@
             <button class="tab-button" data-tab="stopwatch">Stopwatch</button>
             <button class="tab-button" data-tab="image-resizer">Image Resizer</button>
             <button class="tab-button" data-tab="grayscale-converter">Grayscale Converter</button>
+        </div>
+
+        <!-- Promotional Video Section (YouTube Playlist Embed) -->
+        <div class="promotional-video-container">
+            <h2 class="text-xl font-bold text-white text-center mb-4">Check Out My Music!</h2>
+            <iframe
+                src="https://www.youtube.com/embed/videoseries?list=OLAK5uy_mW0i-NiUNzZr86QNVoJgNfwisidyoCREA&autoplay=1&mute=1&loop=1&controls=1"
+                title="YouTube video player"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen>
+            </iframe>
+            <p class="text-center text-gray-400 text-sm mt-2">Enjoy my latest music directly from YouTube!</p>
         </div>
 
         <!-- Footer Links -->
